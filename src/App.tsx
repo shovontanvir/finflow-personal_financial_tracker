@@ -1,15 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "./components/ui/button";
-import { apiMethods } from "./services/api";
 import Header from "./components/Header";
+import { useTransactions } from "./hooks/useTransactions";
 
 const App = () => {
-  const { data } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: async () => apiMethods.get(),
-  });
+  const { transactions, totals, isLoading, isError } = useTransactions();
 
-  console.log(data);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading transactions.</div>;
+  }
+
+  console.log({ transactions, totals });
 
   return (
     <main>
