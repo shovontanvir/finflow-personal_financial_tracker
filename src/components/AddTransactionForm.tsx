@@ -19,7 +19,7 @@ export const AddTransactionForm = () => {
           <SquarePlus /> Add Transaction
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="sm:max-h-[90vh]">
+      <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Add New Transaction</DrawerTitle>
           <DrawerDescription>
