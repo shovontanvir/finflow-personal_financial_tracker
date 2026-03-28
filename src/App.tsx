@@ -3,6 +3,7 @@ import { useTransactions } from "./hooks/useTransactions";
 import { StatsGrid } from "./components/dashboard/StatusGrid";
 import { CategoryChart } from "./components/dashboard/CategoryChart";
 import { MonthlyComparisonChart } from "./components/dashboard/MonthlyComparisonChart";
+import { TransactionTable } from "./components/dashboard/TransactionTable";
 
 const App = () => {
   const {
@@ -31,12 +32,19 @@ const App = () => {
         {/* Dashboard Stats */}
         <StatsGrid totals={totals} />
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 my-5">
           {/* Category Chart */}
           <CategoryChart categoryData={categoryData} />
 
           {/* Monthly Comparison Chart */}
           <MonthlyComparisonChart monthlyData={monthlyData} />
+        </div>
+
+        <div className="my-5">
+          <h1 className="text-sm font-medium text-muted-foreground mb-4">
+            Transaction Lists
+          </h1>
+          <TransactionTable transactions={transactions} />
         </div>
       </div>
     </main>

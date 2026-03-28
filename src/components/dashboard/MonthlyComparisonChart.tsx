@@ -19,7 +19,7 @@ export const MonthlyComparisonChart = ({ monthlyData }: MonthlyData) => {
     <Card className="col-span-1">
       <CardHeader>
         <CardTitle className="text-sm font-medium text-muted-foreground">
-          Income vs Expenses (Last 6 Months)
+          Spending Trend (Last 6 Months)
         </CardTitle>
       </CardHeader>
       <CardContent>
