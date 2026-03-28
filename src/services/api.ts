@@ -3,8 +3,11 @@ import { mockTransactions } from "../data/mockData";
 import type { ApiResponse } from "../types/api";
 
 const STORAGE_KEY = "finflow_transactions";
+const NEXT_ID_KEY = "finflow_transactions_next_id";
 const LATENCY = 600;
 const SIMULATE_ERROR_CHANCE = 0.25;
+const ID_PREFIX = "txn_";
+const ID_PATTERN = /^txn_(\d+)$/;
 
 const simulateNetworkError = () => {
   if (Math.random() < SIMULATE_ERROR_CHANCE) {
@@ -14,13 +17,63 @@ const simulateNetworkError = () => {
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
+const extractTransactionIdNumber = (id: string): number | null => {
+  const match = ID_PATTERN.exec(id);
+  if (!match) return null;
+
+  const parsed = Number.parseInt(match[1], 10);
+  return Number.isNaN(parsed) ? null : parsed;
+};
+
+const getMaxTransactionIdNumber = (data: Transaction[]): number => {
+  return data.reduce((max, transaction) => {
+    const numericId = extractTransactionIdNumber(transaction.id);
+    if (numericId === null) return max;
+    return Math.max(max, numericId);
+  }, 0);
+};
+
+const getStoredNextIdNumber = (): number | null => {
+  const raw = localStorage.getItem(NEXT_ID_KEY);
+  if (!raw) return null;
+
+  const parsed = Number.parseInt(raw, 10);
+  if (Number.isNaN(parsed) || parsed < 1) return null;
+  return parsed;
+};
+
+const setStoredNextIdNumber = (nextId: number) => {
+  localStorage.setItem(NEXT_ID_KEY, String(nextId));
+};
+
+const ensureNextIdNumber = (data: Transaction[]): number => {
+  const requiredMinNextId = getMaxTransactionIdNumber(data) + 1;
+  const storedNextId = getStoredNextIdNumber();
+  const nextId = Math.max(storedNextId ?? 1, requiredMinNextId);
+
+  setStoredNextIdNumber(nextId);
+  return nextId;
+};
+
+const getNextTransactionId = (data: Transaction[]): string => {
+  const nextIdNumber = ensureNextIdNumber(data);
+  setStoredNextIdNumber(nextIdNumber + 1);
+
+  // Keep seeded style (txn_001, txn_002, ...), while supporting growth past 3 digits.
+  return `${ID_PREFIX}${String(nextIdNumber).padStart(3, "0")}`;
+};
+
 const getDB = (): Transaction[] => {
   const data = localStorage.getItem(STORAGE_KEY);
   if (!data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(mockTransactions));
+    ensureNextIdNumber(mockTransactions);
     return mockTransactions;
   }
-  return JSON.parse(data);
+
+  const parsedData: Transaction[] = JSON.parse(data);
+  ensureNextIdNumber(parsedData);
+  return parsedData;
 };
 
 const saveDB = (data: Transaction[]) => {
@@ -54,10 +107,9 @@ export const apiMethods = {
       simulateNetworkError(); // This will randomly trigger the catch block
       const current = getDB();
 
-      // REAL GENERATION: Create the ID here in the "Service"
       const newTransaction: Transaction = {
         ...body,
-        id: `txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        id: getNextTransactionId(current),
       };
 
       saveDB([newTransaction, ...current]);
