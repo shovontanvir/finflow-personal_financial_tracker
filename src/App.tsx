@@ -4,6 +4,8 @@ import { StatsGrid } from "./components/dashboard/StatusGrid";
 import { CategoryChart } from "./components/dashboard/CategoryChart";
 import { MonthlyComparisonChart } from "./components/dashboard/MonthlyComparisonChart";
 import { TransactionTable } from "./components/dashboard/TransactionTable";
+import { SelectComponent } from "./components/SelectComponent";
+import { useFilterAndPaginationStore } from "./store/useFilterAndPaginationStore";
 
 const App = () => {
   const {
@@ -14,6 +16,27 @@ const App = () => {
     categoryData,
     monthlyData,
   } = useTransactions();
+
+  const { pageSize, setPageSize } = useFilterAndPaginationStore();
+
+  const PAGINATIONOPTIONS = [
+    {
+      value: 5,
+      label: "5",
+    },
+    {
+      value: 10,
+      label: "10",
+    },
+    {
+      value: 25,
+      label: "25",
+    },
+    {
+      value: 50,
+      label: "50",
+    },
+  ];
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -41,9 +64,24 @@ const App = () => {
         </div>
 
         <div className="my-5">
-          <h1 className="text-sm font-medium text-muted-foreground mb-4">
-            Transaction Lists
-          </h1>
+          <div className="w-full flex justify-between items-center mb-4">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Transaction Lists
+            </h3>
+
+            <div className="flex items-center gap-2">
+              <SelectComponent
+                placeholder={pageSize}
+                options={PAGINATIONOPTIONS}
+                classNames="w-auto"
+                onValueChange={(value) => setPageSize(Number(value))}
+              />
+
+              <h3 className="text-xs font-medium text-muted-foreground">
+                Per Page
+              </h3>
+            </div>
+          </div>
           <TransactionTable transactions={transactions} />
         </div>
       </div>
