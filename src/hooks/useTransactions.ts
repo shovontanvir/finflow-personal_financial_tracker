@@ -1,13 +1,27 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiMethods } from "@/services/api";
 import { calculateTotals } from "@/lib/transactionUtils";
 import { useFilterAndPaginationStore } from "@/store/useFilterAndPaginationStore";
 import { sortByAmountAsc, sortByDateAsc } from "@/lib/sortUtils";
+import {
+  filterByCategory,
+  filterByStatus,
+  searchByDescription,
+} from "@/lib/filterUtils";
 
 export const useTransactions = () => {
-  const { page, pageSize, setIsPaginated, setLastPage, sortBy, sortOrder } =
-    useFilterAndPaginationStore();
+  const {
+    page,
+    pageSize,
+    setIsPaginated,
+    setLastPage,
+    sortBy,
+    sortOrder,
+    searchString,
+    filterCategory,
+    filterStatus,
+  } = useFilterAndPaginationStore();
   // 1. Fetch data from our "Server" (LocalStorage)
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["transactions"],
@@ -15,11 +29,6 @@ export const useTransactions = () => {
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
-
-  useEffect(() => {
-    setLastPage(Math.ceil((data?.data?.length || 0) / pageSize));
-    setIsPaginated((data?.data?.length || 0) > pageSize);
-  }, [data, pageSize, setIsPaginated, setLastPage]);
 
   // 2. Compute Totals (balance, income, expenses) for dashboard (Derived State)
   const { totals } = useMemo(() => {
@@ -103,12 +112,41 @@ export const useTransactions = () => {
     }
   }, [data, sortBy, sortOrder]);
 
-  // 6. paginated transactions (Derived State)
-  const paginatedTransactions = useMemo(() => {
+  //   7. filtered transactions based on search and filters (Derived State)
+  const filteredTransactions = useMemo(() => {
     const transactions = sortedTransactions;
+    // Apply search by description
+    const searchedByDescriptionList = searchByDescription(
+      transactions,
+      searchString,
+    );
+
+    // apply filter by categrory
+    const filteredByCategoryList = filterByCategory(
+      searchedByDescriptionList,
+      filterCategory,
+    );
+
+    // apply filter by status
+    const filteredByStatusList = filterByStatus(
+      filteredByCategoryList,
+      filterStatus,
+    );
+
+    // Finally return the sorted and filtered list
+    return filteredByStatusList;
+  }, [sortedTransactions, searchString, filterCategory, filterStatus]);
+
+  // 7. paginated transactions (Derived State)
+  const paginatedTransactions = useMemo(() => {
+    const transactions = filteredTransactions;
     const startIndex = (page - 1) * pageSize;
+
+    setLastPage(Math.ceil((transactions.length || 0) / pageSize));
+    setIsPaginated((transactions.length || 0) > pageSize);
+
     return transactions.slice(startIndex, startIndex + pageSize);
-  }, [sortedTransactions, page, pageSize]);
+  }, [filteredTransactions, page, pageSize, setIsPaginated, setLastPage]);
 
   return {
     transactions: paginatedTransactions,

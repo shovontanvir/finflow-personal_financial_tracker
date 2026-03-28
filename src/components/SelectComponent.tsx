@@ -3,7 +3,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -13,21 +12,22 @@ export function SelectComponent({
   placeholder,
   options,
   classNames,
+  value,
   onValueChange,
 }: {
   placeholder?: string | number;
   options: { value: string | number; label: string }[];
   classNames?: string;
   onValueChange?: (value: string | number | null) => void;
+  value?: string | number | null;
 }) {
   return (
-    <Select onValueChange={onValueChange}>
-      <SelectTrigger className={cn("w-full max-w-48", classNames)}>
+    <Select onValueChange={onValueChange} value={value}>
+      <SelectTrigger className={cn("w-full", classNames)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Fruits</SelectLabel>
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}

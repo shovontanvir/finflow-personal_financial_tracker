@@ -6,8 +6,12 @@ interface FilterAndPaginationState {
   isPaginated: boolean; // Optional, can be derived from total count and pageSize
   lastPage: number; // Optional, can be calculated from total count and pageSize
 
-  sortBy?: "date" | "amount"; // e.g., "date" or "amount"
-  sortOrder?: "asc" | "desc"; // e.g., "asc" or "desc"
+  sortBy: "date" | "amount"; // e.g., "date" or "amount"
+  sortOrder: "asc" | "desc"; // e.g., "asc" or "desc"
+
+  searchString: string; // For filtering transactions by description or other text fields
+  filterCategory: string; // For filtering by category (if needed)
+  filterStatus: string; // For filtering by status (if needed)
   // Actions
   setPage: (page: number) => void;
   setPageSize: (size: number) => void;
@@ -17,17 +21,23 @@ interface FilterAndPaginationState {
   setSortBy: (sortBy: "date" | "amount") => void;
   setSortOrder: (sortOrder: "asc" | "desc") => void;
   toggleSort: () => void; // Action to toggle sorting
+  setSearchString: (searchString: string) => void;
+  setFilterCategory: (category: string) => void;
+  setFilterStatus: (status: string) => void;
 }
 
 export const useFilterAndPaginationStore = create<FilterAndPaginationState>(
   (set) => ({
     // Initial State
     page: 1,
-    pageSize: 5, // You can set this to 5 if you want to see pagination work with less data
+    pageSize: 10, // You can set this to 5 if you want to see pagination work with less data
     isPaginated: false,
     lastPage: 1,
     sortBy: "date",
     sortOrder: "desc",
+    searchString: "",
+    filterCategory: "",
+    filterStatus: "",
 
     // Set specific page
     setPage: (page) => set({ page }),
@@ -41,6 +51,8 @@ export const useFilterAndPaginationStore = create<FilterAndPaginationState>(
 
     // Helper to jump back to start
     resetPagination: () => set({ page: 1 }),
+
+    // Sorting actions
     setSortBy: (sortBy) => set({ sortBy }),
     setSortOrder: (sortOrder) => set({ sortOrder }),
     toggleSort: () => {
@@ -48,5 +60,10 @@ export const useFilterAndPaginationStore = create<FilterAndPaginationState>(
         sortOrder: state.sortOrder === "asc" ? "desc" : "asc",
       }));
     },
+
+    // Filtering actions
+    setSearchString: (searchString) => set({ searchString }),
+    setFilterCategory: (filterCategory) => set({ filterCategory }),
+    setFilterStatus: (filterStatus) => set({ filterStatus }),
   }),
 );
