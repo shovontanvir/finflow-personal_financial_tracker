@@ -1,7 +1,8 @@
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, SquarePlus } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { AddTransactionForm } from "./AddTransactionForm";
 
 export default function Header() {
   const { setTheme, theme } = useTheme();
@@ -31,9 +32,8 @@ export default function Header() {
               <Moon className="w-5 h-5" />
             )}
           </Button>
-          <Button variant="outline">
-            <SquarePlus /> Add Transaction
-          </Button>
+
+          <AddTransactionForm />
         </div>
       </div>
     </header>
