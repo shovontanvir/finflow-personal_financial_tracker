@@ -10,6 +10,7 @@ const FilterAndSearchComponent = () => {
     setFilterCategory,
     setFilterStatus,
     setSearchString,
+    resetPagination,
   } = useFilterAndPaginationStore();
 
   const categoryOptions = [
@@ -33,6 +34,7 @@ const FilterAndSearchComponent = () => {
     setFilterCategory("");
     setFilterStatus("");
     setSearchString("");
+    resetPagination();
   };
 
   return (
@@ -46,7 +48,10 @@ const FilterAndSearchComponent = () => {
         options={categoryOptions}
         value={filterCategory}
         classNames="w-full md:w-auto"
-        onValueChange={(value) => setFilterCategory(value as string)}
+        onValueChange={(value) => {
+          setFilterCategory(value as string);
+          resetPagination();
+        }}
       />
 
       {/* filters by status */}
@@ -55,7 +60,10 @@ const FilterAndSearchComponent = () => {
         options={statusOptions}
         value={filterStatus}
         classNames="w-full md:w-auto"
-        onValueChange={(value) => setFilterStatus(value as string)}
+        onValueChange={(value) => {
+          setFilterStatus(value as string);
+          resetPagination();
+        }}
       />
 
       {/* clear filters */}

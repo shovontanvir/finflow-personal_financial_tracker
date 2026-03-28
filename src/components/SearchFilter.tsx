@@ -4,7 +4,8 @@ import { useFilterAndPaginationStore } from "@/store/useFilterAndPaginationStore
 import { useEffect, useState } from "react";
 
 export const SearchFilter = () => {
-  const { setSearchString, searchString } = useFilterAndPaginationStore();
+  const { setSearchString, searchString, resetPagination } =
+    useFilterAndPaginationStore();
 
   const [localSearchString, setLocalSearchString] = useState(
     searchString || "",
@@ -15,7 +16,8 @@ export const SearchFilter = () => {
 
   useEffect(() => {
     setSearchString(debouncedSearchString);
-  }, [debouncedSearchString, setSearchString]);
+    resetPagination();
+  }, [debouncedSearchString, setSearchString, resetPagination]);
 
   useEffect(() => {
     setLocalSearchString(searchString);
