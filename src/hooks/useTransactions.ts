@@ -1,9 +1,12 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiMethods } from "@/services/api";
 import { calculateTotals } from "@/lib/transactionUtils";
+import { useFilterAndPaginationStore } from "@/store/useFilterAndPaginationStore";
 
 export const useTransactions = () => {
+  const { page, pageSize, setIsPaginated, setLastPage } =
+    useFilterAndPaginationStore();
   // 1. Fetch data from our "Server" (LocalStorage)
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["transactions"],
@@ -11,6 +14,11 @@ export const useTransactions = () => {
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  useEffect(() => {
+    setLastPage(Math.ceil((data?.data?.length || 0) / pageSize));
+    setIsPaginated((data?.data?.length || 0) > pageSize);
+  }, [data, pageSize, setIsPaginated, setLastPage]);
 
   // 2. Compute Totals (balance, income, expenses) for dashboard (Derived State)
   const { totals } = useMemo(() => {
@@ -75,8 +83,15 @@ export const useTransactions = () => {
     return Object.values(stats);
   }, [data]);
 
+  // 5. paginated transactions (Derived State)
+  const paginatedTransactions = useMemo(() => {
+    const transactions = data?.data || [];
+    const startIndex = (page - 1) * pageSize;
+    return transactions.slice(startIndex, startIndex + pageSize);
+  }, [data, page, pageSize]);
+
   return {
-    transactions: data?.data || [],
+    transactions: paginatedTransactions,
     totals,
     isLoading,
     isError,

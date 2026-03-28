@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import type { Transaction } from "@/types/transaction";
 import { formatCurrency } from "@/lib/formatters";
+import { PaginationComponent } from "./PaginationComponent";
 
 export function TransactionTable({
   transactions,
@@ -17,55 +18,67 @@ export function TransactionTable({
   transactions: Transaction[];
 }) {
   return (
-    <div className="rounded-md border bg-card px-5">
-      <Table>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead className="w-30">Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            <TableHead className="text-right">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {transactions.length > 0 ? (
-            transactions.map((tx) => (
-              <TableRow key={tx.id}>
-                <TableCell className="text-muted-foreground">
-                  {format(new Date(tx.date), "MMM dd, yyyy")}
-                </TableCell>
-                <TableCell className="font-medium">{tx.description}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary" className="capitalize font-normal">
-                    {tx.category}
-                  </Badge>
-                </TableCell>
+    <>
+      <div className="rounded-md border bg-card px-5">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-30">Date</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {transactions.length > 0 ? (
+              transactions.map((tx) => (
+                <TableRow key={tx.id}>
+                  <TableCell className="text-muted-foreground">
+                    {format(new Date(tx.date), "MMM dd, yyyy")}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {tx.description}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="secondary"
+                      className="capitalize font-normal"
+                    >
+                      {tx.category}
+                    </Badge>
+                  </TableCell>
+                  <TableCell
+                    className={`text-right font-semibold ${
+                      tx.type === "income"
+                        ? "text-emerald-600"
+                        : "text-rose-600"
+                    }`}
+                  >
+                    {tx.type === "income" ? "+" : "-"}{" "}
+                    {formatCurrency(tx.amount)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <StatusBadge status={tx.status} />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
                 <TableCell
-                  className={`text-right font-semibold ${
-                    tx.type === "income" ? "text-emerald-600" : "text-rose-600"
-                  }`}
+                  colSpan={5}
+                  className="h-24 text-center text-muted-foreground"
                 >
-                  {tx.type === "income" ? "+" : "-"} {formatCurrency(tx.amount)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <StatusBadge status={tx.status} />
+                  No matching transactions found.
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={5}
-                className="h-24 text-center text-muted-foreground"
-              >
-                No matching transactions found.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      {/* pagination */}
+      <PaginationComponent />
+    </>
   );
 }
 
