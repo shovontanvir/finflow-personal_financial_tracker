@@ -25,8 +25,6 @@ const App = () => {
     return <div>Error loading transactions.</div>;
   }
 
-  console.log({ transactions, monthlyData });
-
   return (
     <main>
       <Header />
@@ -49,10 +47,13 @@ const App = () => {
             </h3>
 
             <div className="flex items-center gap-4">
+              <div className="hidden md:block">
+                <FilterAndSearchComponent />
+              </div>
               <PageSizeSelector />
             </div>
           </div>
-          <div className="my-5">
+          <div className="my-5 block md:hidden">
             <FilterAndSearchComponent />
           </div>
           <TransactionTable transactions={transactions} />
