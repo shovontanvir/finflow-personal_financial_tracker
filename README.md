@@ -10,9 +10,15 @@ The app helps users track income and expenses, review transaction activity, and 
 
 ## Tech Stack
 
-- **Vite**: Fast dev server startup and instant HMR, ideal for a time-boxed technical assessment where quick iteration matters.
-- **React 19**: Modern component model and up-to-date React patterns for building a scalable, interactive dashboard UI.
-- **TypeScript (Strict Mode)**: Strong type safety, better editor tooling, and fewer runtime bugs through compile-time checks.
+### Dependency Rationale
+
+- **Vite + React 19 + TypeScript (Strict Mode)** as the core frontend foundation.
+- **TanStack Query**: standardizes async data fetching, caching, loading/error states, and invalidation.
+- **React Hook Form + Zod**: gives schema-first validation with strong TypeScript inference for transaction forms.
+- **Recharts**: provides composable chart primitives for donut/pie and line/area trends.
+- **Lucide React**: offers tree-shakeable icon components with consistent visual style.
+- **date-fns**: simplifies month grouping, date parsing, and display formatting.
+- **clsx + tailwind-merge**: helps compose conditional class names without duplicate/overridden Tailwind utilities.
 
 ### Why vite?
 
@@ -60,3 +66,55 @@ npm run preview
 ```bash
 npm run lint
 ```
+
+## Detailed Documentation
+
+### Architecture Overview
+
+The current codebase is organized into a typed, modular structure:
+
+- `src/services` contains the API/service abstraction.
+- `src/data` contains mock seed data.
+- `src/types` contains reusable TypeScript contracts.
+- `src/App.tsx` is the current UI entry component (minimal scaffold at this stage).
+
+This structure is intentionally designed to separate UI, domain types, and data-access logic.
+
+### Data Source and Mock API Behavior
+
+The app currently uses a local mock service in `src/services/api.ts` instead of an external backend.
+
+- Storage key: `finflow_transactions` in `localStorage`.
+- Initial bootstrap: if no storage data exists, seed transactions from `src/data/mockData.ts`.
+- Simulated latency: `600ms` base delay for network-like behavior.
+- Error simulation: `25%` random error chance to test failure handling paths.
+
+### Available Service Methods
+
+`apiMethods` exposes CRUD-style async functions:
+
+- `get()` returns all transactions.
+- `post(body)` creates a transaction and generates a unique `id`.
+- `put(txn_id, body)` updates a transaction by id.
+- `delete(txn_id)` removes a transaction by id.
+
+All methods return a typed `ApiResponse<T>` shape:
+
+- `success: boolean`
+- `message: string`
+- `data: T | null`
+- `error?: string`
+
+### Type Safety and Domain Contracts
+
+The transaction model is strongly typed in `src/types/transaction.d.ts`.
+
+- `TransactionType`: `income | expense`
+- `TransactionStatus`: `completed | pending | failed`
+- `TransactionCategory`: strict category union (Food, Transport, Utilities, Entertainment, Health, Shopping, Income, Other)
+
+This enforces compile-time correctness across filtering, charting, and form validation.
+
+### Seed Dataset
+
+`src/data/mockData.ts` includes 30 transactions spanning multiple months, so dashboard summaries and trend charts have meaningful data immediately after first run.
