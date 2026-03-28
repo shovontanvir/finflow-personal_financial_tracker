@@ -11,6 +11,9 @@ import { useFilterAndPaginationStore } from "@/store/useFilterAndPaginationStore
 export const PaginationComponent = () => {
   const { lastPage, page, setPage } = useFilterAndPaginationStore();
   const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
+
+  if (lastPage <= 1) return null; // No need to show pagination if there's only 1 page
+
   return (
     <div className="flex items-center justify-between px-5 py-3">
       <Pagination>
