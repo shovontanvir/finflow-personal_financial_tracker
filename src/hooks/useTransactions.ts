@@ -3,9 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { apiMethods } from "@/services/api";
 import { calculateTotals } from "@/lib/transactionUtils";
 import { useFilterAndPaginationStore } from "@/store/useFilterAndPaginationStore";
+import { sortByAmountAsc, sortByDateAsc } from "@/lib/sortUtils";
 
 export const useTransactions = () => {
-  const { page, pageSize, setIsPaginated, setLastPage } =
+  const { page, pageSize, setIsPaginated, setLastPage, sortBy, sortOrder } =
     useFilterAndPaginationStore();
   // 1. Fetch data from our "Server" (LocalStorage)
   const { data, isLoading, isError, refetch } = useQuery({
@@ -83,12 +84,31 @@ export const useTransactions = () => {
     return Object.values(stats);
   }, [data]);
 
-  // 5. paginated transactions (Derived State)
+  //   5. Sort transactions based on sortBy and sortOrder (Derived State)
+  const sortedTransactions = useMemo(() => {
+    const transactions = [...(data?.data || [])];
+    if (!sortBy) return transactions;
+
+    switch (sortBy) {
+      case "date":
+        return sortOrder === "asc"
+          ? sortByDateAsc(transactions)
+          : sortByDateAsc(transactions).reverse();
+      case "amount":
+        return sortOrder === "asc"
+          ? sortByAmountAsc(transactions)
+          : sortByAmountAsc(transactions).reverse();
+      default:
+        return transactions;
+    }
+  }, [data, sortBy, sortOrder]);
+
+  // 6. paginated transactions (Derived State)
   const paginatedTransactions = useMemo(() => {
-    const transactions = data?.data || [];
+    const transactions = sortedTransactions;
     const startIndex = (page - 1) * pageSize;
     return transactions.slice(startIndex, startIndex + pageSize);
-  }, [data, page, pageSize]);
+  }, [sortedTransactions, page, pageSize]);
 
   return {
     transactions: paginatedTransactions,

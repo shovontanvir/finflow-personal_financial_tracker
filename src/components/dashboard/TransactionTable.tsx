@@ -7,10 +7,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import type { Transaction } from "@/types/transaction";
 import { formatCurrency } from "@/lib/formatters";
 import { PaginationComponent } from "./PaginationComponent";
+import { useFilterAndPaginationStore } from "@/store/useFilterAndPaginationStore";
 
 export function TransactionTable({
   transactions,
@@ -23,10 +26,14 @@ export function TransactionTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-30">Date</TableHead>
+              <TableHead className="w-30">
+                <SortableHeader column="date" label="Date" />
+              </TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Category</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right">
+                <SortableHeader column="amount" label="Amount" />
+              </TableHead>
               <TableHead className="text-right">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -94,5 +101,46 @@ function StatusBadge({ status }: { status: string }) {
     <Badge variant="outline" className={`capitalize ${variants[status]}`}>
       {status}
     </Badge>
+  );
+}
+
+interface Props {
+  column: "date" | "amount";
+  label: string;
+}
+
+function SortableHeader({ column, label }: Props) {
+  const { sortBy, sortOrder, setSortBy, setSortOrder, toggleSort } =
+    useFilterAndPaginationStore();
+
+  const isActive = sortBy === column;
+
+  const sortHandler = () => {
+    if (isActive) {
+      toggleSort();
+    } else {
+      setSortBy(column);
+      setSortOrder("asc");
+    }
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="-ml-3 h-8 data-[state=open]:bg-accent"
+      onClick={sortHandler}
+    >
+      <span>{label}</span>
+      {isActive ? (
+        sortOrder === "asc" ? (
+          <ArrowUp className="ml-2 h-4 w-4 text-emerald-600" />
+        ) : (
+          <ArrowDown className="ml-2 h-4 w-4 text-emerald-600" />
+        )
+      ) : (
+        <ArrowUpDown className="ml-2 h-4 w-4 opacity-30" />
+      )}
+    </Button>
   );
 }
