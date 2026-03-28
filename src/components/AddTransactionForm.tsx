@@ -10,13 +10,15 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { SquarePlus } from "lucide-react";
+import { TransactionForm } from "./TransactionForm";
 
 export const AddTransactionForm = () => {
   return (
     <Drawer direction="right">
       <DrawerTrigger asChild>
         <Button variant="outline">
-          <SquarePlus /> Add Transaction
+          <SquarePlus />{" "}
+          <span className="hidden md:inline-block">Add Transaction</span>
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -26,7 +28,9 @@ export const AddTransactionForm = () => {
             Enter the details of your new transaction
           </DrawerDescription>
         </DrawerHeader>
-        {/* will add form component here */}
+        <div className="p-5">
+          <TransactionForm onSuccess={() => {}} />
+        </div>
         <DrawerFooter>
           <Button>Submit</Button>
           <DrawerClose asChild>

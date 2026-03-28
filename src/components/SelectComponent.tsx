@@ -18,18 +18,21 @@ export function SelectComponent({
   placeholder?: string | number;
   options: { value: string | number; label: string }[];
   classNames?: string;
-  onValueChange?: (value: string | number | null) => void;
+  onValueChange?: (value: string | null) => void;
   value?: string | number | null;
 }) {
   return (
-    <Select onValueChange={onValueChange} value={value}>
+    <Select
+      value={value == null ? undefined : String(value)}
+      onValueChange={(v) => onValueChange?.(v)}
+    >
       <SelectTrigger className={cn("w-full", classNames)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem key={String(option.value)} value={String(option.value)}>
               {option.label}
             </SelectItem>
           ))}
