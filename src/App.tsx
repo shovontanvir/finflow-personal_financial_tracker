@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "./components/ui/button";
 import { apiMethods } from "./services/api";
+import Header from "./components/Header";
 
 const App = () => {
   const { data } = useQuery({
@@ -12,6 +13,7 @@ const App = () => {
 
   return (
     <main>
+      <Header />
       <h1 className="text-5xl">
         Finflow - your personal financial tracking application
       </h1>

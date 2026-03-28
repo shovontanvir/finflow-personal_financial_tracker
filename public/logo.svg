@@ -1,0 +1,32 @@
+<svg 
+      viewBox="0 0 100 100" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+  <defs>
+    <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#0EA5E9" /> {/* Tailwind Sky-500 */}
+      <stop offset="100%" stopColor="#10B981" /> {/* Tailwind Emerald-500 */}
+    </linearGradient>
+  </defs>
+  
+  {/* Abstract 'F' + Upward Arrow Path */}
+  <path
+    d="M20 80V20H75V35H35V45H65V60H35V80H20Z"
+    fill="currentColor"
+    className="opacity-20"
+  />
+  <path
+    d="M25 85V15H80V30H40V42H70V54H40V85H25Z"
+    fill="currentColor"
+  />
+  <path
+    d="M60 45L85 15L95 25L70 55H60Z"
+    fill="#10B981"
+  />
+  <path
+    d="M80 15H95V30L80 15Z"
+    fill="#065F46"
+  />
+</svg>
