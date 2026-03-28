@@ -5,7 +5,7 @@ import type { ApiResponse } from "../types/api";
 const STORAGE_KEY = "finflow_transactions";
 const NEXT_ID_KEY = "finflow_transactions_next_id";
 const LATENCY = 600;
-const SIMULATE_ERROR_CHANCE = 0.25;
+const SIMULATE_ERROR_CHANCE = 0.1;
 const ID_PREFIX = "txn_";
 const ID_PATTERN = /^txn_(\d+)$/;
 
@@ -91,12 +91,7 @@ export const apiMethods = {
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : "An unknown error occurred";
-      return {
-        success: false,
-        message: "Operation failed",
-        data: null,
-        error: errorMessage,
-      };
+      throw new Error(errorMessage);
     }
   },
 
@@ -121,12 +116,7 @@ export const apiMethods = {
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : "An unknown error occurred";
-      return {
-        success: false,
-        message: "Creation failed",
-        data: null,
-        error: errorMessage,
-      };
+      throw new Error(errorMessage);
     }
   },
 
@@ -163,12 +153,7 @@ export const apiMethods = {
       const errorMessage =
         e instanceof Error ? e.message : "An unknown error occurred";
 
-      return {
-        success: false,
-        message: "Update failed",
-        data: null,
-        error: errorMessage,
-      };
+      throw new Error(errorMessage);
     }
   },
 
@@ -199,12 +184,7 @@ export const apiMethods = {
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : "An unknown error occurred";
-      return {
-        success: false,
-        message: "Delete failed",
-        data: null,
-        error: errorMessage,
-      };
+      throw new Error(errorMessage);
     }
   },
 };

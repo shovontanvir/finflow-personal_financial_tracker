@@ -8,6 +8,8 @@ export const useTransactions = () => {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["transactions"],
     queryFn: () => apiMethods.get(),
+    retry: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // 2. Compute Totals (balance, income, expenses) for dashboard (Derived State)

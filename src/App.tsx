@@ -1,6 +1,7 @@
 import { Button } from "./components/ui/button";
 import Header from "./components/Header";
 import { useTransactions } from "./hooks/useTransactions";
+import { StatsGrid } from "./components/dashboard/StatusGrid";
 
 const App = () => {
   const { transactions, totals, isLoading, isError } = useTransactions();
@@ -13,17 +14,21 @@ const App = () => {
     return <div>Error loading transactions.</div>;
   }
 
-  console.log({ transactions, totals });
+  console.log({ transactions, totals, isError, isLoading });
 
   return (
     <main>
       <Header />
-      <h1 className="text-5xl">
-        Finflow - your personal financial tracking application
-      </h1>
-      <Button className="mt-4" variant="outline">
-        Get Started
-      </Button>
+      <div className="container">
+        {/* Dashboard Stats */}
+        <StatsGrid totals={totals} />
+        <h1 className="text-5xl">
+          Finflow - your personal financial tracking application
+        </h1>
+        <Button className="mt-4" variant="outline">
+          Get Started
+        </Button>
+      </div>
     </main>
   );
 };
