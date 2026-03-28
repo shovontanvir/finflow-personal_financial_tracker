@@ -43,6 +43,38 @@ export const useTransactions = () => {
     }));
   }, [data]);
 
+  // 4. Return monthwise transactions for dashboard (Derived State)
+  const monthlyData = useMemo(() => {
+    const transactions = data?.data || [];
+    const last6Months = Array.from({ length: 6 }, (_, i) => {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      return d.toLocaleString("en-US", { month: "short" });
+    }).reverse(); // ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"]
+
+    // Initialize the map with 0s so every month exists
+    const stats = last6Months.reduce(
+      (acc, month) => {
+        acc[month] = { month, income: 0, expense: 0 };
+        return acc;
+      },
+      {} as Record<string, { month: string; income: number; expense: number }>,
+    );
+
+    // Single-pass reduction
+    transactions.forEach((tx) => {
+      const month = new Date(tx.date).toLocaleString("en-US", {
+        month: "short",
+      });
+      if (stats[month]) {
+        if (tx.type === "income") stats[month].income += tx.amount;
+        else stats[month].expense += tx.amount;
+      }
+    });
+
+    return Object.values(stats);
+  }, [data]);
+
   return {
     transactions: data?.data || [],
     totals,
@@ -50,5 +82,6 @@ export const useTransactions = () => {
     isError,
     refetch,
     categoryData,
+    monthlyData,
   };
 };

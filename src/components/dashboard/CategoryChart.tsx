@@ -58,7 +58,7 @@ export const CategoryChart = ({
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-muted-foreground text-center">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
           Spending by Category
         </CardTitle>
       </CardHeader>
