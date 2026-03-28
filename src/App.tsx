@@ -1,10 +1,11 @@
-import { Button } from "./components/ui/button";
 import Header from "./components/Header";
 import { useTransactions } from "./hooks/useTransactions";
 import { StatsGrid } from "./components/dashboard/StatusGrid";
+import { CategoryChart } from "./components/dashboard/CategoryChart";
 
 const App = () => {
-  const { transactions, totals, isLoading, isError } = useTransactions();
+  const { transactions, totals, isLoading, isError, categoryData } =
+    useTransactions();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -14,7 +15,7 @@ const App = () => {
     return <div>Error loading transactions.</div>;
   }
 
-  console.log({ transactions, totals, isError, isLoading });
+  console.log({ transactions, categoryData });
 
   return (
     <main>
@@ -22,12 +23,11 @@ const App = () => {
       <div className="container">
         {/* Dashboard Stats */}
         <StatsGrid totals={totals} />
-        <h1 className="text-5xl">
-          Finflow - your personal financial tracking application
-        </h1>
-        <Button className="mt-4" variant="outline">
-          Get Started
-        </Button>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Category Chart */}
+          <CategoryChart categoryData={categoryData} />
+        </div>
       </div>
     </main>
   );

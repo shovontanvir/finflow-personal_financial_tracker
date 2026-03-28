@@ -22,11 +22,33 @@ export const useTransactions = () => {
     return { totals };
   }, [data]);
 
+  // 3. calculate category based expense for dashboard (Derived State)
+  const categoryData = useMemo(() => {
+    const transactions = data?.data || [];
+
+    const categoryMap = transactions.reduce(
+      (acc, tx) => {
+        // Filter and accumulate in one go
+        if (tx.type === "expense") {
+          acc[tx.category] = (acc[tx.category] || 0) + tx.amount;
+        }
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    return Object.entries(categoryMap).map(([name, value]) => ({
+      name,
+      value,
+    }));
+  }, [data]);
+
   return {
     transactions: data?.data || [],
     totals,
     isLoading,
     isError,
     refetch,
+    categoryData,
   };
 };
