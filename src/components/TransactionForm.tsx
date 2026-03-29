@@ -1,5 +1,6 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import {
   transactionSchema,
   type TransactionFormValues,
@@ -8,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectComponent } from "./SelectComponent";
 import { useAddTransaction } from "@/hooks/useAddTransaction";
+import type { Transaction } from "@/types/transaction";
+import type { ApiResponse } from "@/types/api";
 
 const typeOptions = [
   { label: "Income", value: "income" },
@@ -56,14 +59,27 @@ export const TransactionForm = ({
     },
   });
 
-  const successHandler = (data: unknown) => {
+  const successHandler = (data: ApiResponse<Transaction>) => {
     reset();
-    console.log(data);
+    toast.success(data?.message, {
+      style: {
+        background: "#10b981",
+        color: "#ffffff",
+        border: "1px solid #059669",
+      },
+    });
     onSuccessCallback();
   };
 
-  const errorHandler = (err: unknown) => {
+  const errorHandler = (err: ApiResponse<Transaction>) => {
     console.log(err);
+    toast.error("There was an error adding the transaction", {
+      style: {
+        background: "#ef4444",
+        color: "#ffffff",
+        border: "1px solid #dc2626",
+      },
+    });
   };
 
   const { mutate } = useAddTransaction(successHandler, errorHandler);
