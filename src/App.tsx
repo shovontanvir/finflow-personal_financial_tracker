@@ -1,4 +1,5 @@
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import { useTransactions } from "./hooks/useTransactions";
 import { StatsGrid } from "./components/dashboard/StatusGrid";
 import { CategoryChart } from "./components/dashboard/CategoryChart";
@@ -61,6 +62,7 @@ const App = () => {
           <TransactionTable transactions={transactions} />
         </div>
       </div>
+      <Footer />
     </main>
   );
 };
