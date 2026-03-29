@@ -65,7 +65,9 @@ export const useTransactions = () => {
   const monthlyData = useMemo(() => {
     const transactions = data?.data || [];
     const last6Months = Array.from({ length: 6 }, (_, i) => {
+      // Anchor to day 1 to avoid month overflow (e.g., Jan 31 -> Mar 3).
       const d = new Date();
+      d.setDate(1);
       d.setMonth(d.getMonth() - i);
       return d.toLocaleString("en-US", { month: "short" });
     }).reverse(); // ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"]
