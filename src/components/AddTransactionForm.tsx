@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -13,8 +14,10 @@ import { SquarePlus } from "lucide-react";
 import { TransactionForm } from "./TransactionForm";
 
 export const AddTransactionForm = () => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Drawer direction="right">
+    <Drawer direction="right" open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant="outline">
           <SquarePlus />{" "}
@@ -28,13 +31,13 @@ export const AddTransactionForm = () => {
             Enter the details of your new transaction
           </DrawerDescription>
         </DrawerHeader>
-        <div className="p-5">
-          <TransactionForm onSuccess={() => {}} />
+        <div className="flex flex-1 items-center justify-center p-5">
+          <TransactionForm onSuccess={() => setOpen(false)} />
         </div>
         <DrawerFooter>
-          <Button>Submit</Button>
+          {/* <Button>Submit</Button> */}
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="destructive">Close</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

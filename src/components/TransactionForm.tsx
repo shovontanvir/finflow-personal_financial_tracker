@@ -1,21 +1,13 @@
-import { Controller, useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   transactionSchema,
   type TransactionFormValues,
 } from "@/lib/validations/transactions";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SelectComponent } from "@/components/SelectComponent";
-// import { useTransactions } from "@/hooks/useTransactions"; // To trigger a refetch after adding
+import { SelectComponent } from "./SelectComponent";
+import { useAddTransaction } from "@/hooks/useAddTransaction";
 
 const typeOptions = [
   { label: "Income", value: "income" },
@@ -23,161 +15,198 @@ const typeOptions = [
 ];
 
 const categoryOptions = [
-  { label: "Food & Dining", value: "food" },
-  { label: "Rent/Housing", value: "rent" },
-  { label: "Salary", value: "salary" },
-  { label: "Shopping", value: "shopping" },
+  { label: "Food", value: "Food" },
+  { label: "Transport", value: "Transport" },
+  { label: "Utilities", value: "Utilities" },
+  { label: "Entertainment", value: "Entertainment" },
+  { label: "Health", value: "Health" },
+  { label: "Shopping", value: "Shopping" },
+  { label: "Income", value: "Income" },
+  { label: "Other", value: "Other" },
 ];
 
-export const TransactionForm = ({ onSuccess }: { onSuccess: () => void }) => {
-  //   const { addTransaction } = useTransactions(); // Assuming your hook has a mutation
+const statusOptions = [
+  { label: "Completed", value: "completed" },
+  { label: "Pending", value: "pending" },
+  { label: "Failed", value: "failed" },
+];
 
-  const form = useForm<TransactionFormValues>({
+export const TransactionForm = ({
+  onSuccess: onSuccessCallback,
+}: {
+  onSuccess: () => void;
+}) => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema),
+    mode: "onChange",
+    reValidateMode: "onChange",
     defaultValues: {
       description: "",
       amount: 0,
-      type: "expense",
-      category: "Food",
-      status: "completed",
-      date: new Date(),
+      type: "",
+      category: "",
+      status: "",
+      date: new Date().toISOString().slice(0, 10),
     },
   });
 
-  const onSubmit = async (data: TransactionFormValues) => {
-    try {
-      // 1. Add to your local storage / API
-      await console.log(data);
+  const successHandler = (data: unknown) => {
+    reset();
+    console.log(data);
+    onSuccessCallback();
+  };
 
-      // 2. Reset form and close modal
-      form.reset();
-      onSuccess();
-    } catch (error) {
-      console.error("Failed to add transaction", error);
-    }
+  const errorHandler = (err: unknown) => {
+    console.log(err);
+  };
+
+  const { mutate } = useAddTransaction(successHandler, errorHandler);
+
+  const onSubmit = (data: TransactionFormValues) => {
+    console.log(data);
+    mutate(data);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Description */}
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. Monthly Rent" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <label htmlFor="description" className="text-sm font-medium">
+          Description
+        </label>
+        <Input
+          id="description"
+          placeholder="e.g. Monthly Rent"
+          className="text-xs"
+          {...register("description")}
         />
+        {errors.description && (
+          <p className="text-sm font-medium text-destructive">
+            {errors.description.message}
+          </p>
+        )}
+      </div>
 
-        <div className="grid grid-cols-1 gap-4">
-          {/* Amount */}
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount (৳)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    value={field.value ?? 0}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === "" ? 0 : Number(e.target.value),
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <div className="space-y-2">
+        <label htmlFor="amount" className="text-sm font-medium">
+          Amount (Tk)
+        </label>
+        <Input
+          id="amount"
+          type="number"
+          step="0.01"
+          className="text-xs"
+          onFocus={(e) => {
+            if (e.currentTarget.value === "0") {
+              e.currentTarget.value = "";
+            }
+          }}
+          {...register("amount", {
+            setValueAs: (value) => (value === "" ? 0 : Number(value)),
+          })}
+        />
+        {errors.amount && (
+          <p className="text-sm font-medium text-destructive">
+            {errors.amount.message}
+          </p>
+        )}
+      </div>
 
-          {/* Type */}
-          <Controller
-            control={form.control}
-            name="type"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormLabel>Type</FormLabel>
-                <FormControl>
-                  <SelectComponent
-                    value={field.value ?? ""}
-                    onValueChange={(selectedValue) => {
-                      field.onChange(selectedValue);
-                      form.setValue(
-                        "type",
-                        selectedValue as TransactionFormValues["type"],
-                        {
-                          shouldDirty: true,
-                          shouldTouch: true,
-                          shouldValidate: true,
-                        },
-                      );
-                    }}
-                    options={typeOptions}
-                    placeholder="Select type"
-                  />
-                </FormControl>
-                {fieldState.error && (
-                  <p className="text-sm font-medium text-destructive">
-                    {fieldState.error.message}
-                  </p>
-                )}
-              </FormItem>
-            )}
-          />
-        </div>
+      <div className="space-y-2">
+        <label htmlFor="date" className="text-sm font-medium">
+          Date
+        </label>
+        <Input
+          id="date"
+          type="date"
+          className="text-xs"
+          max={new Date().toISOString().slice(0, 10)}
+          defaultValue={new Date().toISOString().slice(0, 10)}
+          {...register("date", {
+            setValueAs: (value) => value,
+          })}
+        />
+        {errors.date && (
+          <p className="text-sm font-medium text-destructive">
+            {errors.date.message}
+          </p>
+        )}
+      </div>
 
-        {/* Category */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Type</label>
         <Controller
-          control={form.control}
-          name="category"
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <FormControl>
-                <SelectComponent
-                  value={field.value ?? ""}
-                  onValueChange={(selectedValue) => {
-                    field.onChange(selectedValue);
-                    form.setValue(
-                      "category",
-                      selectedValue as TransactionFormValues["category"],
-                      {
-                        shouldDirty: true,
-                        shouldTouch: true,
-                        shouldValidate: true,
-                      },
-                    );
-                  }}
-                  options={categoryOptions}
-                  placeholder="Choose category"
-                />
-              </FormControl>
-              {fieldState.error && (
-                <p className="text-sm font-medium text-destructive">
-                  {fieldState.error.message}
-                </p>
-              )}
-            </FormItem>
+          control={control}
+          name="type"
+          render={({ field }) => (
+            <SelectComponent
+              options={typeOptions}
+              placeholder="Select type"
+              onValueChange={field.onChange}
+              value={field.value ?? ""}
+              classNames="text-xs"
+            />
           )}
         />
+        {errors.type && (
+          <p className="text-sm font-medium text-destructive">
+            {errors.type.message}
+          </p>
+        )}
+      </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? "Saving..." : "Add Transaction"}
-        </Button>
-      </form>
-    </Form>
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Category</label>
+        <Controller
+          control={control}
+          name="category"
+          render={({ field }) => (
+            <SelectComponent
+              options={categoryOptions}
+              placeholder="Choose category"
+              onValueChange={field.onChange}
+              value={field.value ?? ""}
+              classNames="text-xs"
+            />
+          )}
+        />
+        {errors.category && (
+          <p className="text-sm font-medium text-destructive">
+            {errors.category.message}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Status</label>
+        <Controller
+          control={control}
+          name="status"
+          render={({ field }) => (
+            <SelectComponent
+              options={statusOptions}
+              placeholder="Choose status"
+              onValueChange={field.onChange}
+              value={field.value ?? ""}
+              classNames="text-xs"
+            />
+          )}
+        />
+        {errors.status && (
+          <p className="text-sm font-medium text-destructive">
+            {errors.status.message}
+          </p>
+        )}
+      </div>
+
+      <Button type="submit" className="w-full text-xs" disabled={isSubmitting}>
+        {isSubmitting ? "Saving..." : "Add Transaction"}
+      </Button>
+    </form>
   );
 };

@@ -47,7 +47,7 @@ export const useTransactions = () => {
     const categoryMap = transactions.reduce(
       (acc, tx) => {
         // Filter and accumulate in one go
-        if (tx.type === "expense") {
+        if (tx.type.toLowerCase() === "expense") {
           acc[tx.category] = (acc[tx.category] || 0) + tx.amount;
         }
         return acc;
@@ -87,7 +87,8 @@ export const useTransactions = () => {
         month: "short",
       });
       if (stats[month]) {
-        if (tx.type === "income") stats[month].income += tx.amount;
+        if (tx.type.toLowerCase() === "income")
+          stats[month].income += tx.amount;
         else stats[month].expense += tx.amount;
       }
     });

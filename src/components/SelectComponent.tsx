@@ -21,13 +21,18 @@ export function SelectComponent({
   onValueChange?: (value: string | null) => void;
   value?: string | number | null;
 }) {
+  // Get the label for the selected value
+  const displayLabel = value
+    ? options.find((option) => String(option.value) === String(value))?.label
+    : undefined;
+
   return (
     <Select
       value={value == null ? undefined : String(value)}
       onValueChange={(v) => onValueChange?.(v)}
     >
       <SelectTrigger className={cn("w-full", classNames)}>
-        <SelectValue placeholder={placeholder} />
+        <SelectValue placeholder={placeholder}>{displayLabel}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

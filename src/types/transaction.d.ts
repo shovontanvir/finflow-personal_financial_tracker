@@ -11,11 +11,12 @@ export type TransactionCategory =
   | "Health"
   | "Shopping"
   | "Income"
-  | "Other";
+  | "Other"
+  | "";
 
-export type TransactionStatus = "completed" | "pending" | "failed";
+export type TransactionStatus = "completed" | "pending" | "failed" | "";
 
-export type TransactionType = "income" | "expense";
+export type TransactionType = "income" | "expense" | "";
 
 /**
  * The core Transaction interface.
