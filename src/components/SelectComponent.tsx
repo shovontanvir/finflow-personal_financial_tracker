@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-export function SelectComponent({
+export const SelectComponent = ({
   placeholder,
   options,
   classNames,
@@ -20,7 +20,7 @@ export function SelectComponent({
   classNames?: string;
   onValueChange?: (value: string | null) => void;
   value?: string | number | null;
-}) {
+}) => {
   // Get the label for the selected value
   const displayLabel = value
     ? options.find((option) => String(option.value) === String(value))?.label
@@ -45,4 +45,4 @@ export function SelectComponent({
       </SelectContent>
     </Select>
   );
-}
+};

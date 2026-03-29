@@ -15,11 +15,11 @@ import { formatCurrency } from "@/lib/formatters";
 import { PaginationComponent } from "./PaginationComponent";
 import { useFilterAndPaginationStore } from "@/store/useFilterAndPaginationStore";
 
-export function TransactionTable({
+export const TransactionTable = ({
   transactions,
 }: {
   transactions: Transaction[];
-}) {
+}) => {
   return (
     <>
       <div className="rounded-md border bg-card px-5">
@@ -87,7 +87,7 @@ export function TransactionTable({
       <PaginationComponent />
     </>
   );
-}
+};
 
 // Internal helper for status colors
 function StatusBadge({ status }: { status: string }) {
