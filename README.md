@@ -30,6 +30,93 @@ The live demo includes 30 seed transactions with mock data. You can:
 
 **Note**: Data is stored locally in your browser's localStorage and will reset on page refresh.
 
+## Key Features & Highlights
+
+### Core Requirements (All Implemented ✅)
+
+- 📊 Dashboard with balance, income, and expense totals
+- 🔍 Real-time search with 500ms debounce
+- 🏷️ Multi-filter (category + status)
+- 📈 Sorting by date and amount
+- 📋 Pagination (5/10/25/50 items per page)
+- 📝 Add transaction form with Zod validation
+- 📊 6-month spending trend chart
+- 🍩 Category breakdown donut chart
+
+### Extra Features (Beyond Requirements 🎁)
+
+#### 1. **Dark Mode Support** 🌙
+
+- Full light/dark theme switching via `next-themes`
+- Toggle button in header
+- Automatically detects system preference
+- All components properly styled for both themes
+- Persisted theme preference in localStorage
+
+#### 2. **Professional Error Handling** ⚠️
+
+- Custom `<Error />` component with user-friendly messages
+- "Try Again" button with automatic query invalidation
+- Fallback UI displays on API failures
+- Mock API simulates 25% error rate for robustness testing
+
+#### 3. **Loading States & Skeleton UI** ⏳
+
+- `<LoadingSkeleton />` component with shimmer animation
+- Professional skeleton loader during initial data fetch
+- Smooth transition from loading to content
+- Prevents layout shift (CLS optimization)
+
+#### 4. **Toast Notifications** 📬
+
+- Success toasts (green #10b981) on transaction creation
+- Error toasts (red #ef4444) on failures
+- `sonner` library for auto-dismissing notifications
+- Custom styling with brand colors
+- Professional UX feedback for user actions
+
+#### 5. **Mock API Error Simulation** 🛡️
+
+- Configurable random error injection (25% failure rate)
+- Realistic network latency simulation (1.5s base delay)
+- Tests error handling and retry logic
+- Helps validate UI during development
+
+#### 6. **Mock Data with Realistic Values** 📊
+
+- 30 seed transactions spanning 6 months
+- Mixed income and expense types
+- All categories represented
+- Various status values (completed/pending/failed)
+- Proper date distribution for trend analysis
+
+#### 7. **Comprehensive Responsive Design** 📱
+
+- **Mobile-first approach** with Tailwind CSS breakpoints
+- **Drawer optimization**: 80vw on mobile → 50vw on desktop (`md:w-1/2`)
+- **Table responsiveness**: Horizontal scroll on mobile, multiline on larger screens
+- **Chart responsiveness**: Responsive container with aspect ratio maintenance
+- **Navigation**: Collapsible menu on mobile, full header on desktop
+- **Spacing & Padding**: Dynamic padding that adapts from mobile (px-4) to desktop (px-8)
+- **Font sizes**: Fluid typography with Tailwind's responsive modifiers
+- **Grid layouts**: Auto-flow grids that stack on mobile, multi-column on desktop
+- **Touch-friendly**: Button/interactive element sizes optimized for finger targets (min 44×44px)
+- **Media Queries**: Breakpoints at sm (640px), md (768px), lg (1024px), xl (1280px)
+- **Tested resolutions**:
+  - ✅ Mobile: 375px (iPhone SE)
+  - ✅ Tablet: 768px (iPad)
+  - ✅ Desktop: 1920px (Full HD)
+  - ✅ Ultra-wide: 2560px (4K)
+
+**Implementation Details:**
+
+- Header adjusts from stacked buttons (mobile) to inline toolbar (desktop)
+- Drawer width optimizes form usability: narrow on phones, wider on desktops
+- Transaction table shows essential columns on mobile (description, amount), full columns on desktop
+- Charts adjust container width and font sizes for readability
+- Filter controls stack vertically on mobile, horizontally on desktop
+- Pagination adapts button sizes for touch on mobile
+
 ## Tech Stack
 
 ### Dependency Rationale
