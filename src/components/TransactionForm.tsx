@@ -1,6 +1,5 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import {
   transactionSchema,
   type TransactionFormValues,
@@ -8,9 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectComponent } from "./SelectComponent";
-import { useAddTransaction } from "@/hooks/useAddTransaction";
-import type { Transaction } from "@/types/transaction";
-import type { ApiResponse } from "@/types/api";
+import { useEffect, useMemo } from "react";
 
 const typeOptions = [
   { label: "Income", value: "income" },
@@ -35,59 +32,54 @@ const statusOptions = [
 ];
 
 export const TransactionForm = ({
-  onSuccess: onSuccessCallback,
+  initialValues,
+  onSubmit,
+  shouldReset,
+  onResetComplete,
 }: {
-  onSuccess: () => void;
+  initialValues?: (TransactionFormValues & { id?: string }) | null;
+  onSubmit: (data: TransactionFormValues & { id?: string }) => void;
+  shouldReset?: boolean;
+  onResetComplete?: () => void;
 }) => {
+  const defaultValues: TransactionFormValues & { id?: string } = useMemo(() => {
+    return (
+      initialValues || {
+        description: "",
+        amount: 0,
+        type: "",
+        category: "",
+        status: "",
+        date: new Date().toISOString().slice(0, 10),
+      }
+    );
+  }, [initialValues]);
+
   const {
     register,
     handleSubmit,
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<TransactionFormValues>({
+  } = useForm<TransactionFormValues & { id?: string }>({
     resolver: zodResolver(transactionSchema),
     mode: "onChange",
     reValidateMode: "onChange",
-    defaultValues: {
-      description: "",
-      amount: 0,
-      type: "",
-      category: "",
-      status: "",
-      date: new Date().toISOString().slice(0, 10),
-    },
+    defaultValues: defaultValues,
   });
 
-  const successHandler = (data: ApiResponse<Transaction>) => {
-    reset();
-    toast.success(data?.message, {
-      style: {
-        background: "#10b981",
-        color: "#ffffff",
-        border: "1px solid #059669",
-      },
-    });
-    onSuccessCallback();
-  };
+  // Reset form when initialValues change
+  useEffect(() => {
+    console.log("Selected entry:", initialValues);
+    reset(defaultValues);
+  }, [initialValues, defaultValues, reset]);
 
-  const errorHandler = (err: ApiResponse<Transaction>) => {
-    console.log(err);
-    toast.error("There was an error adding the transaction", {
-      style: {
-        background: "#ef4444",
-        color: "#ffffff",
-        border: "1px solid #dc2626",
-      },
-    });
-  };
-
-  const { mutate } = useAddTransaction(successHandler, errorHandler);
-
-  const onSubmit = (data: TransactionFormValues) => {
-    console.log(data);
-    mutate(data);
-  };
+  useEffect(() => {
+    if (shouldReset) {
+      reset();
+      onResetComplete?.();
+    }
+  }, [shouldReset, onResetComplete, reset]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

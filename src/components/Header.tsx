@@ -1,13 +1,32 @@
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+import { Moon, SquarePlus, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { AddTransactionForm } from "./AddTransactionForm";
+import { TransactionFormWrapper } from "./TransactionFormWrapper";
+import { useAddTransaction } from "@/hooks/useAddTransaction";
+import { useCallback, useState } from "react";
+import type { TransactionFormValues } from "@/lib/validations/transactions";
 
 export default function Header() {
   const { setTheme, theme } = useTheme();
+  const [open, setOpen] = useState(false);
+  const [shouldReset, setShouldReset] = useState(false);
+
   const toggleTheme = () =>
     theme === "dark" ? setTheme("light") : setTheme("dark");
+
+  // Pass the close/reset function (captured from wrapper) to the hook
+  const { mutate } = useAddTransaction(() => {
+    setOpen(false);
+    setShouldReset(true);
+  });
+
+  const handleSubmit = useCallback(
+    (data: TransactionFormValues & { id?: string }) => {
+      mutate(data);
+    },
+    [mutate],
+  );
 
   return (
     <header className="border-b bg-white dark:bg-gray-900 sticky top-0 z-50">
@@ -33,7 +52,18 @@ export default function Header() {
             )}
           </Button>
 
-          <AddTransactionForm />
+          <TransactionFormWrapper
+            onSubmit={handleSubmit}
+            shouldReset={shouldReset}
+            open={open}
+            onOpenChange={() => setOpen(!open)}
+            onResetComplete={() => setShouldReset(false)}
+          >
+            <Button variant="outline">
+              <SquarePlus />{" "}
+              <span className="hidden md:inline-block">Add Transaction</span>
+            </Button>
+          </TransactionFormWrapper>
         </div>
       </div>
     </header>
