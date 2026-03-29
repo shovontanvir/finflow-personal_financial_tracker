@@ -32,28 +32,22 @@ const statusOptions = [
 ];
 
 export const TransactionForm = ({
-  initialValues,
   onSubmit,
   shouldReset,
   onResetComplete,
 }: {
-  initialValues?: (TransactionFormValues & { id?: string }) | null;
-  onSubmit: (data: TransactionFormValues & { id?: string }) => void;
+  onSubmit: (data: TransactionFormValues) => void;
   shouldReset?: boolean;
   onResetComplete?: () => void;
 }) => {
-  const defaultValues: TransactionFormValues & { id?: string } = useMemo(() => {
-    return (
-      initialValues || {
-        description: "",
-        amount: 0,
-        type: "",
-        category: "",
-        status: "",
-        date: new Date().toISOString().slice(0, 10),
-      }
-    );
-  }, [initialValues]);
+  const defaultValues: TransactionFormValues = {
+    description: "",
+    amount: 0,
+    type: "",
+    category: "",
+    status: "",
+    date: new Date().toISOString().slice(0, 10),
+  };
 
   const {
     register,
@@ -61,18 +55,12 @@ export const TransactionForm = ({
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<TransactionFormValues & { id?: string }>({
+  } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema),
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: defaultValues,
   });
-
-  // Reset form when initialValues change
-  useEffect(() => {
-    console.log("Selected entry:", initialValues);
-    reset(defaultValues);
-  }, [initialValues, defaultValues, reset]);
 
   useEffect(() => {
     if (shouldReset) {

@@ -20,7 +20,6 @@ export const TransactionFormWrapper = ({
   open,
   onResetComplete,
   onOpenChange,
-  initialValues,
 }: {
   children?: React.ReactNode;
   onSubmit: (data: TransactionFormValues & { id?: string }) => void;
@@ -28,7 +27,6 @@ export const TransactionFormWrapper = ({
   open?: boolean;
   onResetComplete?: () => void;
   onOpenChange?: (open: boolean) => void;
-  initialValues?: (TransactionFormValues & { id?: string }) | null;
 }) => {
   const handleSubmit = useCallback(
     (data: TransactionFormValues & { id?: string }) => {
@@ -57,7 +55,6 @@ export const TransactionFormWrapper = ({
             onSubmit={handleSubmit}
             shouldReset={shouldReset}
             onResetComplete={onResetComplete}
-            initialValues={initialValues}
           />
         </div>
         <DrawerFooter>
