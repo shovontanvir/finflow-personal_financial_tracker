@@ -7,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectComponent } from "./SelectComponent";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 const typeOptions = [
   { label: "Income", value: "income" },
