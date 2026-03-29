@@ -17,7 +17,12 @@ export const AddTransactionForm = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Drawer direction="right" open={open} onOpenChange={setOpen}>
+    <Drawer
+      direction="right"
+      open={open}
+      onOpenChange={setOpen}
+      shouldScaleBackground={false}
+    >
       <DrawerTrigger asChild>
         <Button variant="outline">
           <SquarePlus />{" "}
@@ -31,11 +36,10 @@ export const AddTransactionForm = () => {
             Enter the details of your new transaction
           </DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-1 items-center justify-center p-5">
+        <div className="w-full p-5 min-h-0 flex-1 overflow-visible flex flex-col justify-center">
           <TransactionForm onSuccess={() => setOpen(false)} />
         </div>
         <DrawerFooter>
-          {/* <Button>Submit</Button> */}
           <DrawerClose asChild>
             <Button variant="destructive">Close</Button>
           </DrawerClose>

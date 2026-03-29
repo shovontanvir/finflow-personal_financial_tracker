@@ -31,7 +31,7 @@ export function SelectComponent({
       value={value == null ? undefined : String(value)}
       onValueChange={(v) => onValueChange?.(v)}
     >
-      <SelectTrigger className={cn("w-full", classNames)}>
+      <SelectTrigger className={cn("w-full pointer-events-auto", classNames)}>
         <SelectValue placeholder={placeholder}>{displayLabel}</SelectValue>
       </SelectTrigger>
       <SelectContent>

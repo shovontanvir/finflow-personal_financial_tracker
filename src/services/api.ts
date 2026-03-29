@@ -4,8 +4,8 @@ import type { ApiResponse } from "../types/api";
 
 const STORAGE_KEY = "finflow_transactions";
 const NEXT_ID_KEY = "finflow_transactions_next_id";
-const LATENCY = 600;
-const SIMULATE_ERROR_CHANCE = 0.1;
+const LATENCY = 1500;
+const SIMULATE_ERROR_CHANCE = 0.25; // 25% chance to simulate an error
 const ID_PREFIX = "txn_";
 const ID_PATTERN = /^txn_(\d+)$/;
 

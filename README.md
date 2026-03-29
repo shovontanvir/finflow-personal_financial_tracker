@@ -87,7 +87,7 @@ The app currently uses a local mock service in `src/services/api.ts` instead of 
 - Storage key: `finflow_transactions` in `localStorage`.
 - Initial bootstrap: if no storage data exists, seed transactions from `src/data/mockData.ts`.
 - Simulated latency: `600ms` base delay for network-like behavior.
-- Error simulation: `10%` random error chance to test failure handling paths.
+- Error simulation: `25%` random error chance to test failure handling paths.
 
 ### Available Service Methods
 

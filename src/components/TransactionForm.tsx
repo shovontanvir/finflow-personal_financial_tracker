@@ -140,9 +140,15 @@ export const TransactionForm = ({
         <Input
           id="date"
           type="date"
-          className="text-xs"
+          className="text-xs pointer-events-auto"
           max={new Date().toISOString().slice(0, 10)}
           defaultValue={new Date().toISOString().slice(0, 10)}
+          onClick={(e) => {
+            const input = e.currentTarget as HTMLInputElement;
+            if (input.showPicker) {
+              input.showPicker();
+            }
+          }}
           {...register("date", {
             setValueAs: (value) => value,
           })}

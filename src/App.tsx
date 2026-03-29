@@ -6,6 +6,8 @@ import { MonthlyComparisonChart } from "./components/dashboard/MonthlyComparison
 import { TransactionTable } from "./components/dashboard/TransactionTable";
 import PageSizeSelector from "./components/dashboard/PageSizeSelector";
 import FilterAndSearchComponent from "./components/dashboard/FilterAndSearchComponent";
+import Error from "./components/Error";
+import LoadingSkeleton from "./components/LoadingSkeleton";
 
 const App = () => {
   const {
@@ -18,11 +20,11 @@ const App = () => {
   } = useTransactions();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSkeleton />;
   }
 
   if (isError) {
-    return <div>Error loading transactions.</div>;
+    return <Error />;
   }
 
   return (
